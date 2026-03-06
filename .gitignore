@@ -1,8 +1,37 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+ENV/
+
+# Python Cache
 __pycache__/
-*.pth
+*.pyc
+*.pyo
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Environment
 .env
+.env.local
+
+# Notebooks
 .ipynb_checkpoints
+*.ipynb
+
+# Data
 data/raw/real/*
 !data/raw/real/.gitkeep
 data/raw/ai/*
 !data/raw/ai/.gitkeep
+
+# Large binary files
+*.pth
+
+# Temp files
+uploads/
+*.tmp
