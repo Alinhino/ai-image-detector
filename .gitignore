@@ -1,0 +1,8 @@
+__pycache__/
+*.pth
+.env
+.ipynb_checkpoints
+data/raw/real/*
+!data/raw/real/.gitkeep
+data/raw/ai/*
+!data/raw/ai/.gitkeep

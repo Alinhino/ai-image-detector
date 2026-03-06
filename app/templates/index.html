@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Detector Pro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link ref="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-content">
+                <div class="nav-logo">
+                    <i class="fas fa-robot"></i>
+                    <span>AI Vision Pro</span>
+                </div>
+                <div class="nav-links">
+                    <button class="nav-btn active" data-tab="detector"><i class="fas fa-magnifying-glass"></i> Detector</button>
+                    <button class="nav-btn" data-tab="batch"><i class="fas fa-images"></i> Batch Upload</button>
+                    <button class="nav-btn" data-tab="history"><i class="fas fa-history"></i> History</button>
+                    <button class="nav-btn" data-tab="stats"><i class="fas fa-chart-bar"></i> Statistics</button>
+                </div>
+                <div class="nav-settings">
+                    <button class="theme-toggle" title="Toggle dark mode">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- Detector Tab -->
+            <section class="tab-content active" id="detector">
+                <div class="container-fluid">
+                    <div class="page-header">
+                        <h1>Image Detector</h1>
+                        <p>Upload an image to detect if it's AI-generated or authentic</p>
+                    </div>
+
+                    <div class="grid grid-2">
+                        <!-- Upload Section -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h2><i class="fas fa-cloud-arrow-up"></i> Upload Image</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="upload-zone" id="uploadZone">
+                                    <div class="upload-icon"><i class="fas fa-image"></i></div>
+                                    <p class="upload-text">Drag & drop your image here</p>
+                                    <p class="upload-subtext">or click to browse (PNG, JPG, JPEG up to 200MB)</p>
+                                    <input type="file" id="imageInput" class="file-input" accept="image/*">
+                                </div>
+                                <button class="btn btn-primary btn-block mt-3" id="detectBtn" style="display: none;">
+                                    <i class="fas fa-wand-magic-sparkles"></i> Analyze Image
+                                </button>
+                                <div id="uploadStatus" class="status-message"></div>
+                            </div>
+                        </div>
+
+                        <!-- Results Section -->
+                        <div class="card" id="resultsCard" style="display: none;">
+                            <div class="card-header">
+                                <h2><i class="fas fa-chart-pie"></i> Analysis Results</h2>
+                            </div>
+                            <div class="card-body">
+                                <div class="verdict-box" id="verdictBox"></div>
+                                
+                                <div class="results-metrics">
+                                    <div class="metric-item metric-ai">
+                                        <div class="metric-label">AI Generated</div>
+                                        <div class="metric-value" id="aiScore">0%</div>
+                                    </div>
+                                    <div class="metric-item metric-authentic">
+                                        <div class="metric-label">Authentic</div>
+                                        <div class="metric-value" id="realScore">0%</div>
+                                    </div>
+                                </div>
+
+                                <div class="progress-section">
+                                    <div class="progress-item">
+                                        <label>AI Generated Probability</label>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill" id="aiProgressFill"></div>
+                                        </div>
+                                        <span class="progress-text" id="aiProgressText">0%</span>
+                                    </div>
+                                    <div class="progress-item">
+                                        <label>Authentic Image Probability</label>
+                                        <div class="progress-bar">
+                                            <div class="progress-fill authentic" id="realProgressFill"></div>
+                                        </div>
+                                        <span class="progress-text" id="realProgressText">0%</span>
+                                    </div>
+                                </div>
+
+                                <div class="image-info" id="imageInfo"></div>
+                                
+                                <button class="btn btn-secondary btn-block mt-3" id="resetBtn">
+                                    <i class="fas fa-refresh"></i> Upload Another Image
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="card mt-4" id="previewCard" style="display: none;">
+                        <div class="card-header">
+                            <h2><i class="fas fa-image"></i> Image Preview</h2>
+                        </div>
+                        <div class="card-body">
+                            <img id="previewImage" src="" alt="Preview" class="preview-img">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Batch Upload Tab -->
+            <section class="tab-content" id="batch">
+                <div class="container-fluid">
+                    <div class="page-header">
+                        <h1>Batch Detection</h1>
+                        <p>Upload multiple images to detect them all at once</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h2><i class="fas fa-images"></i> Upload Multiple Images</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="upload-zone" id="batchUploadZone">
+                                <div class="upload-icon"><i class="fas fa-folder-open"></i></div>
+                                <p class="upload-text">Drag & drop multiple images here</p>
+                                <p class="upload-subtext">Select 2 or more images (PNG, JPG, JPEG)</p>
+                                <input type="file" id="batchImageInput" class="file-input" accept="image/*" multiple>
+                            </div>
+                            <button class="btn btn-primary btn-block mt-3" id="batchDetectBtn" style="display: none;">
+                                <i class="fas fa-wand-magic-sparkles"></i> Analyze All Images
+                            </button>
+                            <div id="batchStatus" class="status-message"></div>
+                        </div>
+                    </div>
+
+                    <div id="batchResultsContainer" style="display: none;">
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h2><i class="fas fa-check-circle"></i> Batch Results</h2>
+                            </div>
+                            <div class="card-body">
+                                <div id="batchResults" class="batch-results-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- History Tab -->
+            <section class="tab-content" id="history">
+                <div class="container-fluid">
+                    <div class="page-header">
+                        <h1>Detection History</h1>
+                        <p>View your recent image detections</p>
+                        <button class="btn btn-danger btn-small" id="clearHistoryBtn">
+                            <i class="fas fa-trash"></i> Clear History
+                        </button>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div id="historyContainer" class="history-list">
+                                <div class="empty-state">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No detection history yet. Start by uploading an image!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Statistics Tab -->
+            <section class="tab-content" id="stats">
+                <div class="container-fluid">
+                    <div class="page-header">
+                        <h1>Statistics</h1>
+                        <p>Overview of your detection results</p>
+                    </div>
+
+                    <div class="grid grid-4">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalDetections">0</div>
+                                <div class="stat-label">Total Detections</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon ai-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="aiCount">0</div>
+                                <div class="stat-label">AI Generated</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon authentic-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="authenticCount">0</div>
+                                <div class="stat-label">Authentic</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="avgConfidence">0%</div>
+                                <div class="stat-label">Avg Confidence</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h2><i class="fas fa-pie-chart"></i> Detection Distribution</h2>
+                        </div>
+                        <div class="card-body">
+                            <div id="statsChart" class="chart-placeholder">
+                                <p>Chart visualization coming soon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="spinner" id="loadingSpinner" style="display: none;">
+        <div class="spinner-inner">
+            <i class="fas fa-circle-notch"></i>
+            <p>Analyzing image...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

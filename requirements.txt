@@ -1,0 +1,8 @@
+torch
+torchvision
+streamlit
+flask
+flask-cors
+matplotlib
+pillow
+scikit-learn
